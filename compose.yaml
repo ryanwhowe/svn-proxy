@@ -1,0 +1,9 @@
+services:
+
+  svn:
+    image: subversion:latest
+    volumes:
+      - svnData:/var/lib/svn
+
+volumes:
+  svnData:
