@@ -1,7 +1,7 @@
 services:
 
   svn:
-    image: subversion:latest
+    image: ryanwhowe/svn-proxy:latest
     restart: unless-stopped
     volumes:
       - svnData:/var/lib/svn
