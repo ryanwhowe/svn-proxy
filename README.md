@@ -1,6 +1,9 @@
+[![Docker Image](https://img.shields.io/badge/docker%20image-available-green.svg)](https://hub.docker.com/repository/docker/ryanwhowe/svn-proxy/) ![Docker Pulls](https://img.shields.io/docker/pulls/ryanwhowe/svn-proxy) ![Docker Image Version](https://img.shields.io/docker/v/ryanwhowe/svn-proxy)
+
+
 # svn-proxy
 
-svn docker container runing webDav access via http, intented for use behind a proxy.
+svn docker container runing webDav access via http, intented for use behind a proxy.  This is available on DockerHub [ryanwhowe/svn-proxy](https://hub.docker.com/repository/docker/ryanwhowe/svn-proxy/).  But if you need to alter the settings files for apache it is simple enough to build it yourself.
 
 ## Build the SVN 
 
@@ -18,7 +21,7 @@ Copy the `compose.override.example.yaml` to `compose.override.yaml` and the `com
 docker compose up -d
 ```
 
-Once the container is running we will need to create permission
+Once the container is running we will need to create a repository and the user and the permissions
 
 Add a new Repository
 
@@ -26,13 +29,13 @@ Add a new Repository
 docker compose exec svn sh -c "svnadmin create /var/lib/svn/repos/{reponame}"
 ```
 
-Add the user to the correct file
+Add the user to the password file
 
 ```bash
 docker compose exec svn sh -c "htpasswd /var/lib/svn/access/svnpass {username}"
 ```
 
-Add the user to the access file
+Add the user to the access file [see svnBook](https://svnbook.red-bean.com/en/1.7/svn.serverconfig.pathbasedauthz.html) for documentation on how to perform that.
 ```bash
 docker compose exec svn sh -c "vim /var/lib/svn/access/svnauth"
 ```
@@ -43,8 +46,6 @@ access can be `r`, ` `, or `rw` ... ` ` is used to give NO access.
 [{reponame}:{path}]
 {username}={access}
 ```
-
-You can also setup groups [see svnBook](https://svnbook.red-bean.com/en/1.7/svn.serverconfig.pathbasedauthz.html) for documentation on how to perform that.
 
 Load a dump file, here are two different ways to pipe the dump file content into the container's load command.
 
