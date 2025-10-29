@@ -3,6 +3,4 @@ services:
   svn:
     # ports:
     #   - "8000:80" # if your proxy needs to have the http port exposed on the host server set it here
-    environment:
-      SVN_SERVER_NAME: '' # The fully qualified name for the subversion instance
-      SVN_AUTH_NAME: '' # The name of the authorization request
+

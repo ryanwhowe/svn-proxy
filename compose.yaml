@@ -2,6 +2,7 @@ services:
 
   svn:
     image: subversion:latest
+    restart: unless-stopped
     volumes:
       - svnData:/var/lib/svn
 
