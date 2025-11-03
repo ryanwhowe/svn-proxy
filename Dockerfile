@@ -8,7 +8,7 @@ RUN apt update &&\
  /usr/sbin/a2enmod dav dav_svn authz_svn &&\
  touch /var/lib/svn/access/svnpass && touch /var/lib/svn/access/svnauth
 
-COPY settings/http/index.html /var/www/html/
+COPY settings/http /var/www/html
 
 RUN chown -R www-data:www-data /var/www/html
 
