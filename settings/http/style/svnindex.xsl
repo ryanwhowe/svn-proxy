@@ -40,7 +40,10 @@
           </xsl:if>
           <xsl:value-of select="index/@path"/>
         </title>
-        <link rel="stylesheet" type="text/css" href="/style/svnindex.css"/>
+        <link rel="stylesheet" type="text/css" href="/style/svnindex.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
       </head>
       <body>
@@ -52,6 +55,7 @@
                 <xsl:text>Custom svn Image file from: </xsl:text>
                 <xsl:element name="a">
                     <xsl:attribute name="href">https://hub.docker.com/repository/docker/ryanwhowe/svn-proxy</xsl:attribute>
+                    <xsl:attribute name="target">_blank</xsl:attribute>
                     <xsl:text>ryanwhowe/svn-proxy</xsl:text>
                 </xsl:element>
             </xsl:element>
