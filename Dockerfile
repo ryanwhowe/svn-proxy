@@ -1,7 +1,7 @@
 FROM debian:trixie-slim
 
 RUN apt update &&\
- apt upgrade &&\
+ apt upgrade -y &&\
  apt install -y gzip vim apache2 subversion libapache2-mod-svn &&\
  mkdir --parents /var/lib/svn/repos &&\
  mkdir --parents /var/lib/svn/access &&\
