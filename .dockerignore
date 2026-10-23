@@ -1,0 +1,11 @@
+.git
+.github
+.idea
+.DS_Store
+AGENTS.md
+compose.override.yaml
+*.dump
+*.dump.gz
+*.tar
+*.tar.gz
+backups/
