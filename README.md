@@ -87,3 +87,45 @@ gunzip -c example.dump.gz | docker compose exec -T --user www-data svn svnadmin 
 ```
 
 Verify the restored repository with `svnadmin verify` and a checkout; add its authorization rule before HTTP access. Dumps contain versioned repository history, but do not include access files, hooks, or repository configuration. Back those up separately. For a complete volume archive, stop the service before copying the volume, preserve ownership and permissions, and test restoration into a separate volume. Do not use `docker compose down -v` on a deployment whose data you intend to keep.
+
+## Optional: custom browser styling
+
+You can supply your own styling for the browser directory listings without rebuilding the image. This uses Subversion's `SVNIndexXSLT` directive: the browser transforms the directory listing from XML into HTML using an XSLT file, which links to your CSS. Mounting CSS alone does not enable styling. See the [Subversion documentation](https://svnbook.red-bean.com/en/1.8/svn.serverconfig.httpd.html) and [Apache's sample XSLT and CSS files](https://svn.apache.org/repos/asf/subversion/trunk/tools/xslt/) for a starting point.
+
+This method requires browser support for XSLT. Chrome [plans to remove native XSLT support in version 158, scheduled for November 17, 2026](https://developer.chrome.com/docs/web-platform/deprecating-xslt). Check compatibility with the browsers you intend to use before enabling it.
+
+In your deployment directory, outside the source checkout, create `custom-style/` containing your own `svnindex.xsl` and `svnindex.css`. In the XSLT file's generated HTML `<head>`, set the CSS link to match its public URL:
+
+```xml
+<link rel="stylesheet" type="text/css" href="/style/svnindex.css" />
+```
+
+Create `svn-style.conf` alongside `compose.yaml` with this additional Apache configuration:
+
+```apache
+<Location /svn>
+  SVNIndexXSLT "/style/svnindex.xsl"
+</Location>
+```
+
+Add these read-only bind mounts to the existing `svn` service in `compose.override.yaml`, retaining any other deployment settings:
+
+```yaml
+services:
+  svn:
+    volumes:
+      - ./custom-style:/var/www/html/style:ro
+      - ./svn-style.conf:/etc/apache2/conf-enabled/svn-style.conf:ro
+```
+
+Create the files before starting the container, and ensure Apache can read them and traverse the host directory. The base Compose file's `svnData` volume remains mounted at `/var/lib/svn`. Only put public styling assets in `custom-style/`, since its contents are served over HTTP. If using a reverse proxy, route `/style/` to this container as well as `/svn/`; the example assumes both paths are served at the public site's root.
+
+Validate the merged Compose and Apache configuration, then recreate the service to apply the mounts. The Apache check uses a disposable container; applying the mounts briefly interrupts the running service.
+
+```bash
+docker compose config --quiet
+docker compose run --rm --no-deps svn -t
+docker compose up -d --no-deps svn
+```
+
+Open `/svn/` through your normal public URL and authenticate. Confirm that the directory links work and that `/style/svnindex.xsl` and `/style/svnindex.css` load successfully. Later CSS or XSLT edits are visible through the bind mount after a browser refresh; Apache configuration edits require a restart. To restore the default listings, remove both styling mounts from the override and recreate the service with the same `up` command.
