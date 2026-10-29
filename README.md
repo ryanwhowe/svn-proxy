@@ -15,6 +15,10 @@ The smoke test requires Bash, Docker, and curl on the host. It creates a disposa
 
 Pull requests run these checks for `linux/amd64`, `linux/arm64`, `linux/riscv64`, `linux/ppc64le`, `linux/s390x`, and `linux/arm/v7`, using QEMU where needed. Pushes to `main` publish only after all platforms pass. Images receive both `latest` and `sha-<full Git commit SHA>` tags; use a SHA tag or image digest for a specific deployment and rollback target. ARMv6 is not supported by the current base image; separate AMD64 v2/v3 images are not published.
 
+The separate `GitHub Actions Audit` workflow runs [zizmor](https://docs.zizmor.sh/) on every pull request targeting `main`, including updates and changes to the target branch. Findings fail the `Zizmor` check and appear as workflow annotations. The repository's branch protection requires this GitHub Actions check to pass before merging into `main`, including for administrators, and requires the PR branch to be up to date with `main`. Run `zizmor .` locally after installing it to check workflow changes.
+
+The `forbidden-uses` policy in `.github/zizmor.yml` allows only reviewed action commits, preventing a return to older releases by tag or SHA. The JavaScript actions currently use Node 24. When updating or adding actions, check their released `action.yml` (including actions called by composite actions) for supported runtimes, then update both the workflow pins and the allowlist. This policy requires maintenance as runtimes are deprecated; zizmor does not automatically detect Node runtime deprecations.
+
 ## Deployment
 
 Copy `compose.yaml` and `compose.override.example.yaml` to the deployment directory, then rename the example to `compose.override.yaml`. Configure the reverse proxy's network or uncomment the port mapping in the override as appropriate.
